@@ -1956,18 +1956,18 @@ netdev_tx_t rwnx_start_monitor_if_xmit(struct sk_buff *skb, struct net_device *d
                     sgi = 1;
                     printk("  sgi\n");
                 }
-                if ((mcs_have & IEEE80211_RADIOTAP_MCS_HAVE_FEC) && (iterator.this_arg[1] & IEEE80211_RADIOTAP_MCS_FEC_LDPC)) {
-                    printk("  ldpc\n");
-                }
-                if (mcs_have & IEEE80211_RADIOTAP_MCS_HAVE_STBC) {
-                    u8 stbc = (iterator.this_arg[1] & IEEE80211_RADIOTAP_MCS_STBC_MASK) >> IEEE80211_RADIOTAP_MCS_STBC_SHIFT;
-                    printk("  stbc=0x%x\n", stbc);
-                }
-                if ((mcs_have & IEEE80211_RADIOTAP_MCS_HAVE_FMT) && (iterator.this_arg[1] & IEEE80211_RADIOTAP_MCS_FMT_GF)) {
-                    rate_fmt = FORMATMOD_HT_GF;
-                    // FIXME: setting rate_fmt = FORMATMOD_HT_GF just silently discard packets (yes, we can receive greenfield)
-                    printk("  greenfield\n");
-                }
+                // if ((mcs_have & IEEE80211_RADIOTAP_MCS_HAVE_FEC) && (iterator.this_arg[1] & IEEE80211_RADIOTAP_MCS_FEC_LDPC)) {
+                //     printk("  ldpc (unsupported)\n");
+                // }
+                // if (mcs_have & IEEE80211_RADIOTAP_MCS_HAVE_STBC) {
+                //     u8 stbc = (iterator.this_arg[1] & IEEE80211_RADIOTAP_MCS_STBC_MASK) >> IEEE80211_RADIOTAP_MCS_STBC_SHIFT;
+                //     printk("  stbc=0x%x\n", stbc);
+                // }
+                // if ((mcs_have & IEEE80211_RADIOTAP_MCS_HAVE_FMT) && (iterator.this_arg[1] & IEEE80211_RADIOTAP_MCS_FMT_GF)) {
+                //     // NOTE: Greenfield does not actually work here.
+                //     // rate_fmt = FORMATMOD_HT_GF;
+                //     printk("  greenfield (unsupported)\n");
+                // }
             }
             break;
 
