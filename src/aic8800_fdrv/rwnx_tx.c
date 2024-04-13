@@ -11,6 +11,7 @@
 #include <linux/etherdevice.h>
 #include <net/sock.h>
 
+#include "lmac_types.h"
 #include "rwnx_defs.h"
 #include "rwnx_tx.h"
 #include "rwnx_msg_tx.h"
@@ -1855,7 +1856,8 @@ netdev_tx_t rwnx_start_monitor_if_xmit(struct sk_buff *skb, struct net_device *d
     struct rwnx_sta *sta;
     struct rwnx_txq *txq;
     u16_l frame_len, headroom, frame_oft;
-    u8_l tid, rate_fmt = FORMATMOD_NON_HT, rate_idx = 0, txsig_bw = PHY_CHNL_BW_20, sgi = 0;
+    u8_l tid, rate_fmt = FORMATMOD_NON_HT, rate_idx = 0, txsig_bw = PHY_CHNL_BW_20;
+    u16_l sgi = 0;
     u8_l *pframe, *data;
     bool robust;
     struct sk_buff *skb_mgmt;
@@ -1975,6 +1977,7 @@ netdev_tx_t rwnx_start_monitor_if_xmit(struct sk_buff *skb, struct net_device *d
                     printk("  stbc\n");
                 }
                 if ((known & IEEE80211_RADIOTAP_VHT_KNOWN_GI) && (flags & IEEE80211_RADIOTAP_VHT_FLAG_SGI)) {
+                    sgi = 1;
                     printk("  sgi\n");
                 }
                 if (known & IEEE80211_RADIOTAP_VHT_KNOWN_BANDWIDTH) {
