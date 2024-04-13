@@ -9542,15 +9542,21 @@ if((g_rwnx_plat->usbdev->chipid == PRODUCT_ID_AIC8801) ||
 #endif
     rtnl_lock();
 
-    /* Add an initial station interface */
-    vif = rwnx_interface_add(rwnx_hw, "wlan%d", NET_NAME_UNKNOWN,
-                                NL80211_IFTYPE_STATION, NULL);
+    if (rwnx_hw->mod_params->monitor_only) {
+        vif = rwnx_interface_add(rwnx_hw, "monitor%d", 1,
+                                    NL80211_IFTYPE_MONITOR, NULL);
+    }
+    else {
+        /* Add an initial station interface */
+        vif = rwnx_interface_add(rwnx_hw, "wlan%d", NET_NAME_UNKNOWN,
+                                    NL80211_IFTYPE_STATION, NULL);
 
-    #ifdef CONFIG_RWNX_MON_DATA
-    /* Add an initial station interface */
-    vif = rwnx_interface_add(rwnx_hw, "wlan%d", 1,
-                                NL80211_IFTYPE_MONITOR, NULL);
-    #endif
+#ifdef CONFIG_RWNX_MON_DATA
+        /* Add an initial station interface */
+        vif = rwnx_interface_add(rwnx_hw, "wlan%d", 1,
+                                    NL80211_IFTYPE_MONITOR, NULL);
+#endif
+    }
 
     rtnl_unlock();
 
@@ -9567,7 +9573,7 @@ if((g_rwnx_plat->usbdev->chipid == PRODUCT_ID_AIC8801) ||
 	AICWFDBG(LOGINFO, "New interface create %s\r\n", vif->ndev->name);
 
 #ifdef  CONFIG_USE_P2P0
-
+    if (!rwnx_hw->mod_params->monitor_only) {
         rtnl_lock();
         /* Add an initial p2p0 interface */
         vif = rwnx_interface_add(rwnx_hw, "p2p%d", NET_NAME_UNKNOWN,
@@ -9594,6 +9600,7 @@ if((g_rwnx_plat->usbdev->chipid == PRODUCT_ID_AIC8801) ||
         rwnx_hw->is_p2p_alive = 0;
         rwnx_hw->is_p2p_connected = 0;
         atomic_set(&rwnx_hw->p2p_alive_timer_count, 0);
+    }
 #endif
 
     return 0;

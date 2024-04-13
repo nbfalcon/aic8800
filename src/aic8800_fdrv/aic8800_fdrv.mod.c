@@ -42,5 +42,5 @@ MODULE_ALIAS("usb:v368Bp88DFd*dc*dsc*dp*ic*isc*ip*in*");
 MODULE_ALIAS("usb:v2604p0013d*dc*dsc*dp*ic*isc*ip*in*");
 MODULE_ALIAS("usb:v2604p0014d*dc*dsc*dp*ic*isc*ip*in*");
 
-MODULE_INFO(srcversion, "4452C5D4816D5A23C41459F");
+MODULE_INFO(srcversion, "5249EF10BA96B8EEC5DD446");
 MODULE_INFO(rhelversion, "9.99");

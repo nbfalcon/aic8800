@@ -70,6 +70,8 @@ struct rwnx_mod_params rwnx_mod_params = {
     COMMON_PARAM(ftl, "", "")
     COMMON_PARAM(dpsm, false, false)
 
+    COMMON_PARAM(monitor_only, false, false)
+
     /* SOFTMAC only parameters */
     SOFTMAC_PARAM(mfp_on, false)
     SOFTMAC_PARAM(gf_on, false)
@@ -226,6 +228,9 @@ MODULE_PARM_DESC(ftl, "Firmware trace level  (Default: \"\")");
 
 module_param_named(dpsm, rwnx_mod_params.dpsm, bool, S_IRUGO);
 MODULE_PARM_DESC(dpsm, "Enable Dynamic PowerSaving (Default: 1-Enabled)");
+
+module_param_named(monitor_only, rwnx_mod_params.monitor_only, bool, S_IRUGO);
+MODULE_PARM_DESC(monitor_only, "When plugging in a device, only create a monitor device. This is useful in packet-injection use cases.");
 
 #ifdef DEFAULT_COUNTRY_CODE
 char default_ccode[4] = DEFAULT_COUNTRY_CODE;

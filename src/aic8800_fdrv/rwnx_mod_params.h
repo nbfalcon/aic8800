@@ -53,6 +53,7 @@ struct rwnx_mod_params {
     bool auto_reply;
     char *ftl;
     bool dpsm;
+    bool monitor_only;
 #ifdef CONFIG_RWNX_FULLMAC
     bool ant_div;
 #endif /* CONFIG_RWNX_FULLMAC */
