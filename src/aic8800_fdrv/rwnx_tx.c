@@ -1963,6 +1963,11 @@ netdev_tx_t rwnx_start_monitor_if_xmit(struct sk_buff *skb, struct net_device *d
                     u8 stbc = (iterator.this_arg[1] & IEEE80211_RADIOTAP_MCS_STBC_MASK) >> IEEE80211_RADIOTAP_MCS_STBC_SHIFT;
                     printk("  stbc=0x%x\n", stbc);
                 }
+                if ((mcs_have & IEEE80211_RADIOTAP_MCS_HAVE_FMT) && (iterator.this_arg[1] & IEEE80211_RADIOTAP_MCS_FMT_GF)) {
+                    rate_fmt = FORMATMOD_HT_GF;
+                    // FIXME: setting rate_fmt = FORMATMOD_HT_GF just silently discard packets (yes, we can receive greenfield)
+                    printk("  greenfield\n");
+                }
             }
             break;
 

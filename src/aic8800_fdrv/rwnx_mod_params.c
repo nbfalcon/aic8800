@@ -37,7 +37,7 @@ struct rwnx_mod_params rwnx_mod_params = {
     COMMON_PARAM(he_ul_on, false, false)
     COMMON_PARAM(ldpc_on, true, true)
     COMMON_PARAM(stbc_on, true, true)
-    COMMON_PARAM(gf_rx_on, false, false)
+    COMMON_PARAM(gf_rx_on, true, true)
     COMMON_PARAM(phy_cfg, 2, 2)
     COMMON_PARAM(uapsd_timeout, 300, 300)
     COMMON_PARAM(ap_uapsd_on, true, true)

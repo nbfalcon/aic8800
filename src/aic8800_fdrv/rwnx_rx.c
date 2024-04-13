@@ -1097,7 +1097,11 @@ static void rwnx_rx_add_rtap_hdr(struct rwnx_hw* rwnx_hw,
         rtap->it_present |= cpu_to_le32(1 << IEEE80211_RADIOTAP_MCS);
         *pos++ = IEEE80211_RADIOTAP_MCS_HAVE_MCS |
                  IEEE80211_RADIOTAP_MCS_HAVE_GI |
-                 IEEE80211_RADIOTAP_MCS_HAVE_BW;
+                 IEEE80211_RADIOTAP_MCS_HAVE_BW |
+                 IEEE80211_RADIOTAP_MCS_HAVE_FMT |
+                 // HAVE_FEC = 0 && !MCS_FEC_LDPC is some kind of "BEC" Fec. No idea about that, don't display anything in Wireshark.
+                 (fec_coding ? IEEE80211_RADIOTAP_MCS_HAVE_FEC : 0);
+
         *pos = 0;
         if (short_gi)
             *pos |= IEEE80211_RADIOTAP_MCS_SGI;

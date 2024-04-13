@@ -9197,7 +9197,7 @@ static int rwnx_ic_rf_init(struct rwnx_hw *rwnx_hw){
 			return -1;
 	}
 #ifdef CONFIG_5M10M
-	rwnx_send_vendor_hwconfig_req(rwnx_hw, hwconfig_id, param);
+	rwnx_send_vendor_hwconfig_req(rwnx_hw, hwconfig_id, param, NULL);
 #endif
 	return 0;
 }
