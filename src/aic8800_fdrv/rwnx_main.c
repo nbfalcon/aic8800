@@ -3640,8 +3640,15 @@ static int rwnx_cfg80211_change_iface(struct wiphy *wiphy,
         rwnx_txq_unk_vif_init(vif);
         #endif
         #if defined(CONFIG_RWNX_MON_RXFILTER)
-        rwnx_send_set_filter(vif->rwnx_hw, (FIF_BCN_PRBRESP_PROMISC | FIF_OTHER_BSS | FIF_PSPOLL | FIF_PROBE_REQ));
-        #endif
+        int filter = FIF_BCN_PRBRESP_PROMISC | FIF_OTHER_BSS | FIF_PSPOLL | FIF_PROBE_REQ;
+        if ((params->flags & MONITOR_FLAG_CHANGED)) {
+            if (params->flags & MONITOR_FLAG_FCSFAIL) {
+                AICWFDBG(LOGINFO, "Enable FCSFAIL\n");
+                filter |= FIF_FCSFAIL;
+            }
+        }
+        rwnx_send_set_filter(vif->rwnx_hw, filter);
+#endif
     } else {
         vif->rwnx_hw->monitor_vif = RWNX_INVALID_VIF;
     }

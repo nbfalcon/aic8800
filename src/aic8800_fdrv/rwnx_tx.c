@@ -1842,7 +1842,7 @@ int rwnx_start_mgmt_xmit(struct rwnx_vif *vif, struct rwnx_sta *sta,
 
 netdev_tx_t rwnx_start_monitor_if_xmit(struct sk_buff *skb, struct net_device *dev)
 {
-    int rtap_len, ret, idx, tmp_len;
+    int rtap_len, ret, idx;
     struct ieee80211_radiotap_header *rtap_hdr; // net/ieee80211_radiotap.h
     struct ieee80211_radiotap_iterator iterator; // net/cfg80211.h
     u8_l *rtap_buf = (u8_l *)skb->data;
