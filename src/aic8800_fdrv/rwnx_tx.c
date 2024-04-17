@@ -1840,6 +1840,9 @@ int rwnx_start_mgmt_xmit(struct rwnx_vif *vif, struct rwnx_sta *sta,
 #define IEEE80211_RADIOTAP_CODING_LDPC_USER0			0x01
 #endif
 
+// #define RWNX_MONITOR_LOG printk
+#define RWNX_MONITOR_LOG(...) do {} while (0)
+
 netdev_tx_t rwnx_start_monitor_if_xmit(struct sk_buff *skb, struct net_device *dev)
 {
     int rtap_len, ret, idx;
@@ -1868,7 +1871,7 @@ netdev_tx_t rwnx_start_monitor_if_xmit(struct sk_buff *skb, struct net_device *d
     rtap_len = ieee80211_get_radiotap_len(rtap_buf);
     frame_len = skb->len;
 
-    printk("rwnx_start_monitor_if_xmit, skb_len=%d, rtap_len=%d\n", skb->len, rtap_len);
+    RWNX_MONITOR_LOG("rwnx_start_monitor_if_xmit, skb_len=%d, rtap_len=%d\n", skb->len, rtap_len);
 
     if((g_rwnx_plat->usbdev->chipid == PRODUCT_ID_AIC8801) ||
         ((g_rwnx_plat->usbdev->chipid == PRODUCT_ID_AIC8800DC ||
@@ -1900,7 +1903,7 @@ netdev_tx_t rwnx_start_monitor_if_xmit(struct sk_buff *skb, struct net_device *d
             case IEEE80211_RADIOTAP_RATE:
                 // This is basic 802.11b/g rate; use MCS/VHT for higher rates
                 rate = *iterator.this_arg;
-                printk("rate=0x%x\n", rate);
+                RWNX_MONITOR_LOG("rate=0x%x\n", rate);
                 for (idx = 0; idx < HW_RATE_MAX; idx++) {
                     if ((rate * 5) == tx_legrates_lut_rate[idx]) {
                         break;
@@ -1909,26 +1912,26 @@ netdev_tx_t rwnx_start_monitor_if_xmit(struct sk_buff *skb, struct net_device *d
                 if (idx < HW_RATE_MAX) {
                     rate_idx = idx;
                 } else {
-                    printk("invalid radiotap rate: %d\n", rate);
+                    RWNX_MONITOR_LOG("invalid radiotap rate: %d\n", rate);
                 }
                 break;
 
             case IEEE80211_RADIOTAP_TX_FLAGS: {
                 u16_l txflags = get_unaligned_le16(iterator.this_arg);
-                printk("txflags=0x%x\n", txflags);
+                RWNX_MONITOR_LOG("txflags=0x%x\n", txflags);
                 if ((txflags & IEEE80211_RADIOTAP_F_TX_NOACK) == 0) {
-                    printk("  TX_NOACK\n");
+                    RWNX_MONITOR_LOG("  TX_NOACK\n");
                 }
                 if (txflags & 0x0010) { // Use preconfigured seq num
                     // NOTE: this is currently ignored due to qos_en=_FALSE and HW seq num override
-                    printk("  GetSequence\n");
+                    RWNX_MONITOR_LOG("  GetSequence\n");
                 }
             }
             break;
 
             case IEEE80211_RADIOTAP_MCS: {
                 u8_l mcs_have = iterator.this_arg[0];
-                printk("mcs_have=0x%x\n", mcs_have);
+                RWNX_MONITOR_LOG("mcs_have=0x%x\n", mcs_have);
                 rate_fmt = FORMATMOD_HT_MF;
                 if (mcs_have & IEEE80211_RADIOTAP_MCS_HAVE_BW) {
                     u8_l bw = (iterator.this_arg[1] & IEEE80211_RADIOTAP_MCS_BW_MASK);
@@ -1942,7 +1945,7 @@ netdev_tx_t rwnx_start_monitor_if_xmit(struct sk_buff *skb, struct net_device *d
                         bw = IEEE80211_RADIOTAP_MCS_BW_20;
                         ch_offset = 2; // CHNL_OFFSET_UPPER;
                     }
-                    printk("  bw=%d, ch_offset=%d\n", bw, ch_offset);
+                    RWNX_MONITOR_LOG("  bw=%d, ch_offset=%d\n", bw, ch_offset);
                 }
                 if (mcs_have & IEEE80211_RADIOTAP_MCS_HAVE_MCS) {
                     u8_l fixed_rate = iterator.this_arg[2] & 0x7f;
@@ -1950,23 +1953,23 @@ netdev_tx_t rwnx_start_monitor_if_xmit(struct sk_buff *skb, struct net_device *d
                         fixed_rate = 0;
                     }
                     rate_idx = fixed_rate;
-                    printk("  fixed_rate=0x%x\n", fixed_rate);
+                    RWNX_MONITOR_LOG("  fixed_rate=0x%x\n", fixed_rate);
                 }
                 if ((mcs_have & IEEE80211_RADIOTAP_MCS_HAVE_GI) && (iterator.this_arg[1] & IEEE80211_RADIOTAP_MCS_SGI)) {
                     sgi = 1;
-                    printk("  sgi\n");
+                    RWNX_MONITOR_LOG("  sgi\n");
                 }
                 // if ((mcs_have & IEEE80211_RADIOTAP_MCS_HAVE_FEC) && (iterator.this_arg[1] & IEEE80211_RADIOTAP_MCS_FEC_LDPC)) {
-                //     printk("  ldpc (unsupported)\n");
+                //     RWNX_MONITOR_LOG("  ldpc (unsupported)\n");
                 // }
                 // if (mcs_have & IEEE80211_RADIOTAP_MCS_HAVE_STBC) {
                 //     u8 stbc = (iterator.this_arg[1] & IEEE80211_RADIOTAP_MCS_STBC_MASK) >> IEEE80211_RADIOTAP_MCS_STBC_SHIFT;
-                //     printk("  stbc=0x%x\n", stbc);
+                //     RWNX_MONITOR_LOG("  stbc=0x%x\n", stbc);
                 // }
                 // if ((mcs_have & IEEE80211_RADIOTAP_MCS_HAVE_FMT) && (iterator.this_arg[1] & IEEE80211_RADIOTAP_MCS_FMT_GF)) {
                 //     // NOTE: Greenfield does not actually work here.
                 //     // rate_fmt = FORMATMOD_HT_GF;
-                //     printk("  greenfield (unsupported)\n");
+                //     RWNX_MONITOR_LOG("  greenfield (unsupported)\n");
                 // }
             }
             break;
@@ -1976,18 +1979,18 @@ netdev_tx_t rwnx_start_monitor_if_xmit(struct sk_buff *skb, struct net_device *d
                 u8 known = iterator.this_arg[0];
                 u8 flags = iterator.this_arg[2];
                 rate_fmt = FORMATMOD_VHT;
-                printk("known=0x%x, flags=0x%x\n", known, flags);
+                RWNX_MONITOR_LOG("known=0x%x, flags=0x%x\n", known, flags);
                 // NOTE: this code currently only supports 1SS for radiotap defined rates
                 if ((known & IEEE80211_RADIOTAP_VHT_KNOWN_STBC) && (flags & IEEE80211_RADIOTAP_VHT_FLAG_STBC)) {
-                    printk("  stbc\n");
+                    RWNX_MONITOR_LOG("  stbc\n");
                 }
                 if ((known & IEEE80211_RADIOTAP_VHT_KNOWN_GI) && (flags & IEEE80211_RADIOTAP_VHT_FLAG_SGI)) {
                     sgi = 1;
-                    printk("  sgi\n");
+                    RWNX_MONITOR_LOG("  sgi\n");
                 }
                 if (known & IEEE80211_RADIOTAP_VHT_KNOWN_BANDWIDTH) {
                     u8_l bw = iterator.this_arg[3] & 0x1F;
-                    printk("  bw=0x%x\n",bw);
+                    RWNX_MONITOR_LOG("  bw=0x%x\n",bw);
                     // NOTE: there are various L and U, but we just use straight 20/40/80
                     // since it's not clear how to set CHNL_OFFSET_LOWER/_UPPER with different
                     // sideband sizes/configurations.  TODO.
@@ -1995,26 +1998,26 @@ netdev_tx_t rwnx_start_monitor_if_xmit(struct sk_buff *skb, struct net_device *d
                     txsig_bw = PHY_CHNL_BW_40;
                     if (bw == 0) {
                         txsig_bw = PHY_CHNL_BW_20;
-                        printk("  20M\n");
+                        RWNX_MONITOR_LOG("  20M\n");
                     } else if (bw >=1 && bw <= 3) {
-                        printk("  40M\n");
+                        RWNX_MONITOR_LOG("  40M\n");
                     } else if (bw >=4 && bw <= 10) {
-                        printk("  80M\n");
+                        RWNX_MONITOR_LOG("  80M\n");
                     } else if (bw >= 11 && bw <= 25) {
-                        printk("  160M\n");
+                        RWNX_MONITOR_LOG("  160M\n");
                     }
                 }
                 // User 0
                 nss = iterator.this_arg[4] & 0x0F; // Number of spatial streams
-                printk("  nss=0x%x\n", nss);
+                RWNX_MONITOR_LOG("  nss=0x%x\n", nss);
                 if (nss > 0) {
                     if (nss > 4) nss = 4;
                     mcs = (iterator.this_arg[4]>>4) & 0x0F; // MCS rate index
                     if (mcs > 8) mcs = 9;
                     rate_idx = mcs;
-                    printk("    mcs=0x%x\n", mcs);
+                    RWNX_MONITOR_LOG("    mcs=0x%x\n", mcs);
                     if (iterator.this_arg[8] & IEEE80211_RADIOTAP_CODING_LDPC_USER0) {
-                        printk("    ldpc\n");
+                        RWNX_MONITOR_LOG("    ldpc\n");
                     }
                 }
             }
@@ -2044,13 +2047,13 @@ netdev_tx_t rwnx_start_monitor_if_xmit(struct sk_buff *skb, struct net_device *d
                 }
                 if (data2 & IEEE80211_RADIOTAP_HE_DATA2_GI_KNOWN) {
                     u8 gi = (data5 & IEEE80211_RADIOTAP_HE_DATA5_GI) >> 4;
-                    printk("  gi: %d\n", gi);
+                    RWNX_MONITOR_LOG("  gi: %d\n", gi);
                 }
             }
             break;
 
             default:
-                printk("unparsed arg: 0x%x\n",iterator.this_arg_index);
+                RWNX_MONITOR_LOG("unparsed arg: 0x%x\n",iterator.this_arg_index);
                 break;
         }
     }
@@ -2062,7 +2065,7 @@ netdev_tx_t rwnx_start_monitor_if_xmit(struct sk_buff *skb, struct net_device *d
         tmp_len = skb->len;
     }
     for (idx = 0; idx < tmp_len; idx+=16) {
-        printk("[%04X] %02X %02X %02X %02X %02X %02X %02X %02X   %02X %02X %02X %02X %02X %02X %02X %02X\n", idx,
+        RWNX_MONITOR_LOG("[%04X] %02X %02X %02X %02X %02X %02X %02X %02X   %02X %02X %02X %02X %02X %02X %02X %02X\n", idx,
             rtap_buf[idx+0],rtap_buf[idx+1],rtap_buf[idx+2],rtap_buf[idx+3],
             rtap_buf[idx+4],rtap_buf[idx+5],rtap_buf[idx+6],rtap_buf[idx+7],
             rtap_buf[idx+8],rtap_buf[idx+9],rtap_buf[idx+10],rtap_buf[idx+11],
@@ -2073,7 +2076,7 @@ netdev_tx_t rwnx_start_monitor_if_xmit(struct sk_buff *skb, struct net_device *d
     /* Get the STA id and TID information */
     sta = rwnx_get_tx_priv(vif, skb, &tid);
     //if (!sta) {
-    //    printk("sta=null, tid=0x%x\n", tid);
+    //    RWNX_MONITOR_LOG("sta=null, tid=0x%x\n", tid);
     //}
     /* Set TID and Queues indexes */
     if (sta) {
