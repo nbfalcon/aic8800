@@ -3146,7 +3146,7 @@ static struct rwnx_vif *rwnx_interface_add(struct rwnx_hw *rwnx_hw,
     }
 
     if (type == NL80211_IFTYPE_AP_VLAN) {
-        memcpy(ndev->dev_addr, params->macaddr, ETH_ALEN);
+        dev_addr_mod(ndev, 0, params->macaddr, ETH_ALEN);
         memcpy(vif->wdev.address, params->macaddr, ETH_ALEN);
     }
     else {
@@ -3155,7 +3155,7 @@ static struct rwnx_vif *rwnx_interface_add(struct rwnx_hw *rwnx_hw,
         
         memcpy(mac_addr, rwnx_hw->wiphy->perm_addr, ETH_ALEN);
         mac_addr[5] ^= vif_idx;
-        memcpy(ndev->dev_addr, mac_addr, ETH_ALEN);
+        dev_addr_mod(ndev, 0, mac_addr, ETH_ALEN);
         memcpy(vif->wdev.address, ndev->dev_addr, ETH_ALEN);
 #else
         memcpy(ndev->dev_addr, rwnx_hw->wiphy->perm_addr, ETH_ALEN);
